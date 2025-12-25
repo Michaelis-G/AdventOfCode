@@ -21,13 +21,33 @@ def ParseInput(filename):
             data[d[0]] = d[1].split()
     return data
 
+def flow(data, step, outs = []):
+    if step == 'out':
+        outs.append('out')
+        return outs
+    for next in data[step]:
+        flow(data, next, outs)
+    return outs
+
+def FullFlow(data, stop, paths = []):
+    if stop == 'out':
+        paths.append([stop])
+        return paths
+    for step in data[stop]:
+        paths.append([step])
+        flow(data, step, paths)
+    return paths
+
 @TrackTime
 def Part1(data):
-    total = 0
+    total = len(flow(data, 'you'))
+    print(f'Answer to part 1 is {total}')
 
-    
+@TrackTime
+def Part2(data):
+    total = FullFlow(data, 'svr')
+    print(f'Answer to part 2 is {total}')
 
-    print('Answer to part 1 is {total}')
-
-data = ParseInput('./data/11.input.test')
-Part1(data)
+data = ParseInput('./data/11.input.test2')
+# Part1(data)
+Part2(data)
