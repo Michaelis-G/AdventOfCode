@@ -12,10 +12,10 @@ def TrackTime(func):
         print("  >> in %f ms" % ((time() - start)*1000))
     return wrapper
 
-def ToString(tab):
+def ToString(tab, sep = ''):
     txt = ''
     for c in tab:
-        txt += str(c)
+        txt += (str(c) + sep)
     return txt
 
 def ParseInput(filename):
@@ -28,17 +28,16 @@ def ParseInput(filename):
                 if c == '.': goal.append(0)
                 elif c == '#': goal.append(1)
                 else: continue
-            tests = []
             combinaisons = []
             for record in records[1:-1]:
-                test = [0 for x in goal]
                 combinaison = ['0' for x in goal]
                 for c in record.strip('()').split(','):
-                    test[int(c)] = 1
                     combinaison[int(c)] = '1'
-                tests.append(test)
                 combinaisons.append(ToString(combinaison))
-            data.append((ToString(goal), combinaisons))
+            goal2 = []
+            for c in records[-1].strip('{}').split(','):
+                goal2.append(int(c))                
+            data.append((ToString(goal), combinaisons, ToString(goal2, '-')))
     return data
 
 def Apply(current, combinaison):
@@ -66,24 +65,30 @@ def Part1(data, maxDepth):
     total = 0
     for d in data:
         goal = d[0]
-        tests = d[1]
         combinaisons = d[1]
-        # print(f'New goal: {goal}')
-        # print(f'Combinaisons: {combinaisons}')
         depth = 0
         currents = [ToString(['0' for x in goal])]
         while depth < maxDepth:
-            #print(f'Currents: {currents}')
             if IsSolution(goal, currents):
-                # print(f'Solution in {depth} tries')
                 total += depth
                 break
             currents = NextRank(currents, combinaisons)
             depth += 1
             if (depth >= maxDepth):
-                # print('HOUSTON!!!!!!!')
+                print(f'Max depth reached... so long for the fish') 
                 return
     print(f'Answer to part 1 is {total}')
 
-data = ParseInput('./data/10.input')
+@TrackTime
+def Part2(data, maxDepth):
+    total = 0
+
+    for d in data:
+        goal = d[-1]
+        combinaisons = d[:-1]
+        print(goal, combinaisons)
+    print(f'Answer to part 2 is {total}')
+
+data = ParseInput('./data/10.input.test')
 Part1(data, 10)
+Part2(data, 2)
