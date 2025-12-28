@@ -1,4 +1,11 @@
-filename = "./data/06.input"
+from time import time
+
+def TrackTime(func):
+    def wrapper(*a, **k):
+        start = time()
+        func(*a, **k)
+        print("  >> in %f ms" % ((time() - start)*1000))
+    return wrapper
 
 def ParseFile(filename):
     f = open(filename, 'r')
@@ -19,6 +26,7 @@ def mul(nums):
         res *= n
     return res
 
+@TrackTime
 def Part1(data):
     nums, ops = [], []
     for line in data[:-1]:
@@ -38,7 +46,7 @@ def Part1(data):
         if (ops[x] == '*'):
             res += mul(items)
 
-    print(f'Part1: {res}')
+    print(f'Answer to part1 is: {res}')
 
 def transpose(matrix):
     transposed = [[0 for _ in range(len(matrix))] for _ in range(len(matrix[0]))]
@@ -47,6 +55,7 @@ def transpose(matrix):
             transposed[j][i] = matrix[i][j]
     return transposed
 
+@TrackTime
 def Part2(data):
     operators = data[len(data) - 1]
     cols = []
@@ -67,17 +76,13 @@ def Part2(data):
     for z, r in enumerate(ranges):
         s, e = r[0], r[1]
         mat = []
-        print(ops[z])
         for y, d in enumerate(data[:-1]):
-            print(d)
             mat.append([])
             cols = d[e-1:s-1:-1]
             if s == 0: cols = d[e-1::-1]
             for i in cols:
                 mat[y].append(i)
-        print(mat)
         mat = transpose(mat)
-        print(mat)
         res = 0
         for i in range(0, len(mat)):
             num = ''
@@ -88,11 +93,9 @@ def Part2(data):
             else:
                 if res == 0: res = 1
                 res *= int(num)
-        print('res', res)
         tot += res
-    print('tot', tot)
+    print(f'Answer to part2 is {tot}')
 
-if __name__ == '__main__':
-    data = ParseFile(filename)
-    Part1(data)
-    Part2(data)
+data = ParseFile('./data/06.input')
+Part1(data)
+Part2(data)

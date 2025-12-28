@@ -74,8 +74,6 @@ def Part1(pairs, limit):
         res *= l
     print(f'Answer to part1 is: {res}')
 
-"""
-"""
 @TrackTime
 def Part2(pairs):
     nb = 0
