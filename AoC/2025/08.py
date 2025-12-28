@@ -1,79 +1,122 @@
 import math
+from time import time
 
-filename = "./data/08.input.test"
+def TrackTime(func):
+    def wrapper(*a, **k):
+        start = time()
+        func(*a, **k)
+        print("  >> in %f ms" % ((time() - start)*1000))
+    return wrapper
 
-def ParseFile(filename):
+def ParseInput(filename):
     f = open(filename, 'r')
     data = f.read()
     f.close()
-    return [
-        [
-            int(l.split(',')[0]),
-            int(l.split(',')[1]),
-            int(l.split(',')[2])
-        ] for l in data.split("\n")
-    ]
+    
+    data = [(int(x.split(',')[0]), int(x.split(',')[1]), int(x.split(',')[2])) for x in data.split('\n')]
+    return data
 
-def distance(a, b):
-    dist = math.sqrt(
-        math.pow(b[0]-a[0], 2)
-        + math.pow(b[1]-a[1], 2)
-        + math.pow(b[2]-a[2], 2)
+def dist(a, b):
+    return math.sqrt(
+        (b[0]-a[0])**2
+        + (b[1]-a[1])**2
+        + (b[2]-a[2])**2
     )
-    return dist
 
-def Part1():
-    data = ParseFile(filename)
+def GetPairsByDistances(boxes):
+    pairs = []
+    for j2 in range(len(boxes)-1, -1, -1):
+        for j1 in range(j2-1, -1, -1):
+            pairs.append(((boxes[j1], boxes[j2]), dist(boxes[j1], boxes[j2])))
+    pairs.sort(key = lambda x: x[1], reverse=False)
+    return pairs
 
-    trajets = dict()
-    for s in range(len(data)-1, -1, -1):
-        for d in range(0, s):
-            l = distance(data[s], data[d])
-            trajets[(d, s)] = l
-    # sort trajets by length
-    trajets = {k: v for k, v in sorted(trajets.items(), key=lambda item: item[1])}
-    nets = list()
-    i = 0
-    for trajet in trajets:
-        if not nets:
-            i += 1
-            # print('new net', i, 'add', trajet[0], trajet[1])
-            nets.append([trajet[0], trajet[1]])
+@TrackTime
+def Part1(pairs, limit):
+    nb = 0
+    junctions = []
+    for pair in pairs:
+        a, b = pair[0][0], pair[0][1]
+        j1, j2 = -1, -1
+        if not junctions:
+            junctions.append([a, b])
         else:
-            isset = False
-            for net in nets:
-                # if isset: break
-                if trajet[0] in net and trajet[1] in net:
-                    print('nothing happens', trajet[1], '&', trajet[0])
-                    i += 1
-                    isset = True
-                    continue
-                elif trajet[0] in net and trajet[1] not in net:
-                    print('new junction', i, 'connecting', trajet[1], 'to', trajet[0], 'in', net)
-                    i += 1
-                    net.append(trajet[1])
-                    print('=>', net)
-                    isset = True
-                elif trajet[1] in net and trajet[0] not in net:
-                    print('new junction', i, 'connecting', trajet[0], 'to', trajet[1], 'in', net)
-                    i += 1
-                    net.append(trajet[0])
-                    print('=>', net)
-                    isset = True
-            if not isset:
-                print('new net', i, 'add', trajet[0], trajet[1])
-                i += 1
-                nets.append([trajet[0], trajet[1]])
-        if i > 9: break
+            for i, junction in enumerate(junctions):
+                if a in junction:
+                    j1 = i
+                elif b in junction:
+                    j2 = i
+            if j1 == j2 and j1 != -1 and j2 != -1:
+                pass
+            elif j1 != -1 and j2 == -1:
+                if b not in junctions[j1]: 
+                    junctions[j1].append(b)
+            elif j2 != -1 and j1 == -1:
+                if a not in junctions[j2]:
+                    junctions[j2].append(a)
+            elif j1  != -1 and j2 != -1:
+                for j in junctions[j2]:
+                    junctions[j1].append(j)
+                junctions.remove(junctions[j2])
+            else:
+                junctions.append([a, b])
+        nb += 1
+        if nb > (limit - 1): break
+        # print(junctions)
+    
+    lens = []
+    for j in junctions:
+        lens.append(len(j))
+    lens.sort(reverse=True)
 
-    lengths = []
-    for net in nets:
-        lengths.append(len(net))
-    lengths.sort(reverse=True)
-    print(lengths[:3])
     res = 1
-    for l in lengths[:3]:
+    for l in lens[:3]:
         res *= l
-    print('Part1:', lengths[:3], res)
+    print(f'Answer to part1 is: {res}')
 
-Part1()
+"""
+"""
+@TrackTime
+def Part2(pairs):
+    nb = 0
+    junctions = []
+    end = False
+    for pair in pairs:
+        a, b = pair[0][0], pair[0][1]
+        j1, j2 = -1, -1
+        if not junctions:
+            junctions.append([a, b])
+        else:
+            for i, junction in enumerate(junctions):
+                if a in junction:
+                    j1 = i
+                elif b in junction:
+                    j2 = i
+            if j1 == j2 and j1 != -1 and j2 != -1:
+                pass
+            elif j1 != -1 and j2 == -1:
+                if b not in junctions[j1]: 
+                    junctions[j1].append(b)
+            elif j2 != -1 and j1 == -1:
+                if a not in junctions[j2]:
+                    junctions[j2].append(a)
+            elif j1  != -1 and j2 != -1:
+                for j in junctions[j2]:
+                    junctions[j1].append(j)
+                junctions.remove(junctions[j2])
+            else:
+                junctions.append([a, b])
+        nb += 1
+        # if nb > (limit - 1): break
+        for j in junctions:
+            if len(j) == 1000:
+                res = pair[0][0][0] * pair[0][1][0]
+                end = True
+        if end:
+            break
+    print(f'Answer to part2 is: {res}')
+
+boxes = ParseInput('./data/08.input')
+pairs = GetPairsByDistances(boxes)
+Part1(pairs, 1000)
+Part2(pairs)

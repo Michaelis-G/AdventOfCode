@@ -1,4 +1,11 @@
-filename = "./data/07.input"
+from time import time
+
+def TrackTime(func):
+    def wrapper(*a, **k):
+        start = time()
+        func(*a, **k)
+        print("  >> in %f ms" % ((time() - start)*1000))
+    return wrapper
 
 def ParseFile(filename):
     f = open(filename, 'r')
@@ -26,6 +33,7 @@ def ForkBeams(row, beams, count):
         else: newbeams.add(beam)
     return count, (newbeams)
 
+@TrackTime
 def Part1(data):
     count = 0
     beams = GetBeamStartIndex(data)
@@ -33,6 +41,7 @@ def Part1(data):
         count, beams = ForkBeams(row, beams, count)
     print('Answer to part1 is:', count)
 
+@TrackTime
 def Part2(data):
     beams = [0 for x in data[0]]
     for i, c in enumerate(data[0]):
