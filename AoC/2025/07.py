@@ -10,9 +10,10 @@ def ParseFile(filename):
         maze.append([x for x in row])
     return maze
 
-def GetBeamIndex(row):
-    (start) = [i for i, c in enumerate(row) if (c == 'S')]
-    return (start)
+def GetBeamStartIndex(data):
+    for i, c in enumerate(data[0]):
+        if c == 'S': return [i]
+    return False
 
 def ForkBeams(row, beams, count):
     newbeams = set()
@@ -25,13 +26,30 @@ def ForkBeams(row, beams, count):
         else: newbeams.add(beam)
     return count, (newbeams)
 
-def Part1():
+def Part1(data):
     count = 0
-    data = ParseFile(filename)
-    beams = GetBeamIndex(data[0])
-
+    beams = GetBeamStartIndex(data)
     for row in data[1:]:
         count, beams = ForkBeams(row, beams, count)
-    print('Part1:', count)
+    print('Answer to part1 is:', count)
 
-Part1()
+def Part2(data):
+    beams = [0 for x in data[0]]
+    for i, c in enumerate(data[0]):
+        if c == 'S':
+            beams[i] = 1
+    for i, row in enumerate(data[1::2]):
+        y = 2*i
+        for x, beam in enumerate(beams):
+            if data[y][x] == '^':
+                beams[x-1] += beams[x]
+                beams[x+1] += beams[x]
+                beams[x] = 0
+    total = 0
+    for beam in beams:
+        total += beam
+    print(f'Answer to part2 is: {total}')
+
+data = ParseFile('./data/07.input')
+Part1(data)
+Part2(data)
