@@ -33,32 +33,45 @@ def Part1(ranges, foods):
             cpt += 1
     print(f'Answer to part1 is: {cpt}')
 
-"""
-Aïe... celui ci est à refaire...
-"""
+def Union(r, p):
+    return [min(r[0], p[0]), max(r[1], p[1])]
+
+def ProcessNext(ranges, i):
+    r = ranges[i]
+    n = None
+    for p in ranges:
+        if r[0]>p[1] or r[1]<p[0] or (r[0] == p[0] and r[1] == p[1]):
+            continue
+        else:
+            n = Union(r, p)
+            break
+    if n is None: return None
+    ranges.remove(r)
+    ranges.remove(p)
+    ranges.append(n)
+    return ranges
+
 @TrackTime
 def Part2(ranges):
-    cpt = 0
-    n = 0
-    for r in ranges:
-        min, max = r[0], r[1]
-        if cpt == 0:
-            cpt = max - min
-            n += 1
+    fresh = 0
+    i = 0
+    ranges.sort()
+    while i < len(ranges):
+        processed = ProcessNext(ranges, i)
+        if processed is None:
+            i += 1
             continue
-        for r2 in ranges[0:n]:
-            min2, max2 = r2[0], r2[1]
-            if min > min2 and max < max2:
-                print(min, max, '=>', min2, max2)
-            if min < min2 and max > max2:
-                print(min, max, '=>', min, max)
-            if min > min2 and max > max2:
-                print(min, max, '=>', min2, max)
-            if min < min2 and max < max2:
-                print(min, max, '=>', min, max2)
+        ranges = processed
 
-    print(f'Answer to part2 is: {cpt}')
+    ranges.sort()
+    for i, r in enumerate(ranges[1:]):
+        if r[0] < ranges[i-1][1]:
+            print(r, ranges[i-1], ranges[i-1][1] - r[0])
+    for r in ranges:
+        fresh += (r[1]-r[0]+1)
+
+    print(f'Answer to part2 is: {fresh}')
 
 ranges, foods = ParseInput('./data/05.input')
-Part1(ranges, foods)
+# Part1(ranges, foods)
 Part2(ranges)
