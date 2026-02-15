@@ -1,8 +1,19 @@
-const DAY = 'XX';
-const fs = require( 'fs');
-let filename = `./data/${DAY}`;
+/**
+ * Share your thoughts
+ */
+
+/**
+ * Update year and day
+ */
+const year = 'YYYY';
+const day = 'XX';
+const fs = require('fs');
 
 const parseInput = () => {
+    let filename = `./data/${year}-${day}`;
+    if (process.argv.length > 2) {
+        filename += '.test';
+    }
     let data = fs.readFileSync(filename, 'utf8');
     return data;
 }
@@ -23,10 +34,10 @@ const part2 = (data) => {
     console.timeEnd('Time');
 }
 
-if (process.argv.length > 2) {
-    filename += '.test';
-}
-console.log('Advent Of Code 2024 day',  DAY);
+/**
+ * Main
+ */
+console.log( `Advent Of Code ${year}-${day}`);
 console.log('==========================');
 part1(parseInput());
 console.log('--------------------------');
