@@ -6,11 +6,11 @@
  * Update year and day
  */
 const year = 'YYYY';
-const day = 'XX';
+const day = 'DD';
 const fs = require('fs');
 
 const parseInput = () => {
-    let filename = `./data/${year}-${day}`;
+    let filename = `./data/${day}`;
     if (process.argv.length > 2) {
         filename += '.test';
     }
