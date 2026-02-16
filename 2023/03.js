@@ -18,11 +18,16 @@ const parseInput = () => {
     return data;
 }
 
-const mapSymbols = (engine) => {
+const mapSymbols = (engine, star = false) => {
     const symbols = [];
     for (let y = 0; y < engine.length; y++) {
         for (let x = 0; x < engine[y].length; x++) {
             const symbol = engine[y][x];
+            if (star) {
+                if (!/\*/.test(symbol)) {
+                    continue;
+                }
+            } else
             if (/[\d,\.]/.test(symbol)) {
                 continue;
             }
@@ -32,6 +37,9 @@ const mapSymbols = (engine) => {
     return symbols;
 }
 
+/**
+ * A reprendre pour la prise en compte des chiffres de fin de ligne.
+ */
 const mapPieces = (engine) => {
     const pieces = [];
     for (let y = 0; y < engine.length; y++) {
@@ -50,35 +58,43 @@ const mapPieces = (engine) => {
                 piece = {value: '0', y: -1, x: []};
             }
         }
+        if (piece.y !== -1) {
+            piece.value = parseInt(piece.value);
+            pieces.push(piece);
+        }
     }
     return pieces;
 }
 
 const isAdjacent = (piece, symbol) => {
-    let adjacent = true;
-    if (piece.y < symbol.y - 1 || piece.y > symbol.y + 1) {
-        adjacent = false;
-    }
-    if (adjacent) {
-        adjacent = false;
-        if (symbol.x >= piece.x[0] - 1 
-            && symbol.x <= piece.x[piece.x.length - 1] + 1) {
-            adjacent  = true;
+    return (piece.y >= symbol.y - 1
+        && piece.y <= symbol.y + 1
+        && symbol.x >= piece.x[0] - 1 
+        && symbol.x <= piece.x[piece.x.length - 1] + 1);
+}
+
+const getGear = (symbol, pieces) => {
+    let gear = [];
+    for (const piece of pieces) {
+        if (isAdjacent(piece, symbol)) {
+            gear.push(piece);
+        }
+        if (gear.length === 2) {
+            break;
         }
     }
-    return adjacent;
+    return gear;
 }
 
 const part1 = (data) => {
     console.time('Time');
     let res = 0;
 
-    const symbols = mapSymbols(data.split('\n'));
-    const pieces = mapPieces(data.split('\n'));
+    const symbols = mapSymbols(data.split('\r\n'));
+    const pieces = mapPieces(data.split('\r\n'));
     for (const piece of pieces) {
         for (const symbol of symbols) {
             if (isAdjacent(piece, symbol)) {
-                console.log(piece.value, 'adj to', symbol.symbol, piece);
                 res += piece.value;
                 break;
             }
@@ -93,6 +109,15 @@ const part2 = (data) => {
     console.time('Time');
     let res = 0;
 
+    const symbols = mapSymbols(data.split('\r\n'), true);
+    const pieces = mapPieces(data.split('\r\n'));
+    for (const symbol of symbols) {
+        const gear = getGear(symbol, pieces);
+        if (gear.length === 2) {
+            res += (gear[0].value * gear[1].value);
+        }
+    }
+
     console.log('Part 2:', res);
     console.timeEnd('Time');
 }
@@ -103,6 +128,5 @@ const part2 = (data) => {
 console.log( `Advent Of Code ${year}-${day}`);
 console.log('==========================');
 part1(parseInput());
-// 536262 too low
 console.log('--------------------------');
 part2(parseInput());
