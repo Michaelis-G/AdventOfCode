@@ -90,8 +90,8 @@ const part1 = (data) => {
     console.time('Time');
     let res = 0;
 
-    const symbols = mapSymbols(data.split('\r\n'));
-    const pieces = mapPieces(data.split('\r\n'));
+    const symbols = mapSymbols(data.split('\n'));
+    const pieces = mapPieces(data.split('\n'));
     for (const piece of pieces) {
         for (const symbol of symbols) {
             if (isAdjacent(piece, symbol)) {
@@ -109,8 +109,8 @@ const part2 = (data) => {
     console.time('Time');
     let res = 0;
 
-    const symbols = mapSymbols(data.split('\r\n'), true);
-    const pieces = mapPieces(data.split('\r\n'));
+    const symbols = mapSymbols(data.split('\n'), true);
+    const pieces = mapPieces(data.split('\n'));
     for (const symbol of symbols) {
         const gear = getGear(symbol, pieces);
         if (gear.length === 2) {
