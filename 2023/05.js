@@ -1,6 +1,7 @@
 /**
  * To complete Part2 i should consider running the search backward
  * From location up to the seed in order to get only the lower value
+ * 31min to solve Part2 => unacceptable.
  */
 
 const year = '2023';
