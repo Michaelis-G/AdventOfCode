@@ -2,9 +2,6 @@
  * Share your thoughts
  */
 
-/**
- * Update year and day
- */
 const year = 'YYYY';
 const day = 'DD';
 const fs = require('fs');
