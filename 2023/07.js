@@ -185,7 +185,6 @@ const part2 = (data) => {
         res += (i + 1)*hands[i].bet;
     }
 
-
     console.log('Part 2:', res);
     console.timeEnd('Time');
 }
