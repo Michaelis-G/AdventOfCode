@@ -133,7 +133,11 @@ const getHandValueWithJokers = (hand) => {
     } else
     if ('2' in combinaisons) {
         if (combinaisons['2'].length === 2) {
-            value = '35' + value;
+            if (j === 1) {
+                value = '35' + value;
+            } else {
+                value = '25' + value;
+            }
         } else {
             if (j === 1) {
                 value = '30'+ value;
