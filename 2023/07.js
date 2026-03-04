@@ -182,10 +182,8 @@ const part2 = (data) => {
     }
     hands.sort((a, b) => a.value - b.value);
     for (let i = 0; i < hands.length; i++) {
-        console.log(hands[i].cards, hands[i].value);
         res += (i + 1)*hands[i].bet;
     }
-
 
     console.log('Part 2:', res);
     console.timeEnd('Time');
