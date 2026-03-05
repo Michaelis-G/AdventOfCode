@@ -1,5 +1,8 @@
 /**
  * Escape the wastelands
+ * Follow the trailkind of test
+ * part1: kinda trivial
+ * part2: //paths
  */
 
 const year = '2023';
@@ -33,6 +36,10 @@ const parseMap = (data) => {
     });
 }
 
+const initNodes = (map) => {
+    return map.filter(n => n.node.endsWith('A')).map(n => n.node);
+}
+
 const findNextNode = (node, map, direction) => {
     const n = map.find(n => n.node === node);
     const dest = n.dest[direction];
@@ -46,7 +53,6 @@ const part1 = (data) => {
     const pattern = parsePattern(data);
     const map = parseMap(data);
 
-    console.log(map);
     node = 'AAA';
     let n = 0;
     while(node !== 'ZZZ') {
@@ -64,7 +70,29 @@ const part1 = (data) => {
 
 const part2 = (data) => {
     console.time('Time');
-    let res = 0;
+    let res = 1;
+
+    const pattern = parsePattern(data);
+    const map = parseMap(data);
+    
+    let nodes = initNodes(map);
+    let moves = [];
+    for (let i = 0; i < nodes.length; i++) {
+        let n = 0;
+        let k = 0;
+        // while (nodes.length > nodes.filter(n => n.endsWith('Z')).length) {
+        while (!nodes[i].endsWith('Z')) {
+            nodes[i] = findNextNode(nodes[i], map, pattern[n]);
+            n += 1;
+            k += 1;
+            if (n % (pattern.length) === 0) {
+                n = 0;
+            }    
+        }
+        moves[i] = k;
+        res *= k;
+    }
+    console.log(moves);
 
     console.log('Part 2:', res);
     console.timeEnd('Time');
