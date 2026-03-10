@@ -102,7 +102,7 @@ const part1 = (data) => {
         positions = walkTheMaze(positions, maze);
         res += 1;
     }
-    displayMaze(maze);
+    // displayMaze(maze);
 
     console.log('Part 1:', res);
     console.timeEnd('Time');
@@ -121,11 +121,11 @@ const part2 = (data) => {
     for (let y = 0; y < maze.length; y++) {
         for (let x = 0; x < maze[y].length; x++) {
             if (maze[y][x].value !== '#') {
-                console.log('considering', y, x);
+                // console.log('considering', y, x);
             }
         }
     }        
-    displayMaze(maze);
+    // displayMaze(maze);
 
     console.log('Part 2:', res);
     console.timeEnd('Time');
