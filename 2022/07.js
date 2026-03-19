@@ -31,7 +31,7 @@ const walkDirectories = (data) => {
       if (line === '$ cd ..') {
         currentDirectory.pop();
       } else {
-        currentDirectory.push(line.split(' ')[2]);
+        currentDirectory.push(currentDirectory.join('') + line.split(' ')[2]);
       }
     } else
     if (/^\d/.test(line)) {
@@ -53,10 +53,8 @@ const part1 = (data) => {
   let res = 0;
 
   const summary = walkDirectories(parseLines(data));
-  console.log(summary);
   for (const [key, size] of Object.entries(summary)) {
     if (size <= 100000) {
-      console.log(key, size);
       res += size;
     }
   }
@@ -68,6 +66,18 @@ const part1 = (data) => {
 const part2 = (data) => {
   console.time('Time');
   let res = 0;
+
+  const max = 70000000;
+  const target = 30000000;
+  const summary = walkDirectories(parseLines(data));
+  const goal = target - max + summary['/'];
+  for (const [key, size] of Object.entries(summary)) {
+    if (size > goal) {
+      if (res === 0 || res > size) {
+        res = size;
+      }
+    }
+  }
 
   console.log('Part 2:', res);
   console.timeEnd('Time');
